@@ -1,13 +1,15 @@
 class ApplicationController < Sinatra::Base
 
-	require 'bundler'
+	class ApplicationController < Sinatra::Base
+
+	require "bundler"
 	Bundler.require();
 
 	register Sinatra::CrossOrigin
 
 	ActiveRecord::Base.establish_connection(
  		:adapter => 'postgresql', 
- 		:database => 'calcutta'
+ 		:database => 'restaurant'
 	)
 
 	configure do
@@ -19,9 +21,20 @@ class ApplicationController < Sinatra::Base
 	set :allow_credentials, true
 
 
-	get	'/' do
-		'Sinatra Server is running'
+
+
+	get "/" do
+		"Sinatra server is running"
 	end
 
+
+
+	options "*" do
+		response.headers["Allow"] = "HEAD, GET, PUT, POST, DELETE, OPTIONS"
+		response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
+	end
+
+
+end
 
 end
