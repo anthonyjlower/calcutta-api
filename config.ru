@@ -24,18 +24,18 @@ require './models/UserModel'
 map ('/') {
 	run ApplicationController
 }
-# map ('/bids') {
-# 	run BidController
-# }
-# map ('/invites') {
-# 	run InviteController
-# }
-# map ('/pools') {
-# 	run PoolController
-# }
-# map ('/teams') {
-# 	run TeamController
-# }
-map ('/user') {
+map ('/bids') {
+	run BidController
+}
+map ('/invites') {
+	run InviteController
+}
+map ('/pools') {
+	run PoolController
+}
+map ('/teams') {
+	run TeamController
+}
+map ('/users') {
 	run UserController
 }

@@ -1,7 +1,5 @@
 class ApplicationController < Sinatra::Base
 
-	class ApplicationController < Sinatra::Base
-
 	require "bundler"
 	Bundler.require();
 
@@ -9,7 +7,7 @@ class ApplicationController < Sinatra::Base
 
 	ActiveRecord::Base.establish_connection(
  		:adapter => 'postgresql', 
- 		:database => 'restaurant'
+ 		:database => 'calcutta'
 	)
 
 	configure do
@@ -33,8 +31,5 @@ class ApplicationController < Sinatra::Base
 		response.headers["Allow"] = "HEAD, GET, PUT, POST, DELETE, OPTIONS"
 		response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
 	end
-
-
-end
 
 end
