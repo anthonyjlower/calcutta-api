@@ -2,12 +2,11 @@ class TeamController < ApplicationController
 
 	get	'/' do
 		@teams = Team.all
-
 		resp = {
 			status: {
 				success: true,
-				message: "These are all of the teams for the calcutta",
-				number_of_teams: @teams.length
+				message: "These are all of the teams",
+				# number_of_teams: @teams.length
 			},
 			teams: @teams
 		}
