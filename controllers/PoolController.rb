@@ -34,4 +34,17 @@ class PoolController < ApplicationController
 		resp.to_json
 	end
 
+	post '/bid' do
+		@pool = Pool.find(1)
+		@bid = @pool.bids.create(pool_id: @pool.id, user_id: params[:user_id], team_id: params[:team_id], bid_amount: params[:bid_amount])
+
+		resp = {
+			status: 200,
+			bid: @bid
+		}
+		resp.to_json
+	end
+
+
+
 end
