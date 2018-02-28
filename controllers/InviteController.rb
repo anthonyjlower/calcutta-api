@@ -24,7 +24,7 @@ class InviteController < ApplicationController
 
 	delete '/:id' do
 		@invite = Invite.find(params[:id])
-		@invites = User.find(@invite.user_id).invites
+		@invites = Pool.find(@invite.pool_id).invites
 		@invite.delete
 
 		resp = {
