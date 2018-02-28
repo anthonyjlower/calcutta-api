@@ -45,6 +45,17 @@ class PoolController < ApplicationController
 		resp.to_json
 	end
 
+	get '/bids' do
+		@bids = Pool.find(1).bids
+
+		resp = {
+			status: 200,
+			number_of_bids: @bids.length,
+			bids: @bids
+		}
+		resp.to_json
+	end
+
 
 
 end
