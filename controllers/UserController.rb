@@ -25,9 +25,8 @@ class UserController < ApplicationController
 		resp.to_json
 	end
 
-	get	'/:id/invites' do
-		@user = User.find(params[:id])
-		@invites = @user.invites
+	get	'/invites' do
+		@invites = User.find(1).invites
 
 		resp = {
 			status: 200,
