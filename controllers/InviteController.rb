@@ -22,6 +22,19 @@ class InviteController < ApplicationController
 		resp.to_json
 	end
 
+	delete '/:id' do
+		@invite = Invite.find(params[:id])
+		@invites = User.find(@invite.user_id).invites
+		@invite.delete
+
+		resp = {
+			status: 200,
+			message: "The invite has been deleted",
+			invites: @invites
+		}
+		resp.to_json
+	end
+
 
 
 
