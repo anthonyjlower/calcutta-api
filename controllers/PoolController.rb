@@ -55,25 +55,24 @@ class PoolController < ApplicationController
 	end
 
 	post '/invite' do
-		@pool = Pool.find(1)
-		@invite = @pool.invites.create(pool_id: @pool.id, user_id: params[:user_id], accepted: false)
+		@pool = Pool.find(params[:pool_id])
+		@user = User.find_by(name: params[:username])
+		@invite = @pool.invites.create(user_id: @user.id, accepted: true)
 
 		resp = {
 			status: 200,
-			invite: @invite
+			message: "Invited #{@user.name} to #{@pool.name} ",
+			data: {
+				pool: @pool,
+				user: @user,
+				invite: @invite
+			}
 		}
 		resp.to_json
 	end
 
 	post '/bid' do
-		@pool = Pool.find(1)
-		@bid = @pool.bids.create(pool_id: @pool.id, user_id: params[:user_id], team_id: params[:team_id], bid_amount: params[:bid_amount])
-
-		resp = {
-			status: 200,
-			bid: @bid
-		}
-		resp.to_json
+		
 	end
 
 	get '/bids' do
