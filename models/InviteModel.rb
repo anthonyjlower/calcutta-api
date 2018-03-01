@@ -1,4 +1,4 @@
 class Invite < ActiveRecord::Base
-	has_one :user
-	has_one :pool	
+	belongs_to :user
+	belongs_to :pool
 end

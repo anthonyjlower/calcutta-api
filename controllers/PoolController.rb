@@ -1,6 +1,6 @@
 class PoolController < ApplicationController
 
-	get "/" do
+	get "/all" do
 		@pools = Pool.all
 
 		resp = {
@@ -8,6 +8,26 @@ class PoolController < ApplicationController
 			pools: @pools
 		}
 		resp.to_json
+	end
+
+	get '/:id' do
+		@pool = Pool.find(params[:id])
+		@pool_members = @pool.users
+		@pool_bids = @pool.bids
+		@teams = Team.all
+
+		resp = {
+			status: 200,
+			message: "Pool #{@pool.id} info, pool's user info, pool's bid info, team info",
+			data: {
+				pool: @pool,
+				users: @pool_members,
+				bids: @pool_bids,
+				teams: @teams	
+			}
+		}
+		resp.to_json
+
 	end
 
 	post '/' do
