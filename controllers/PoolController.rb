@@ -31,14 +31,25 @@ class PoolController < ApplicationController
 	end
 
 	post '/' do
+		# Create new pool
 		@pool = Pool.new
 		@pool.name = params[:name]
 		@pool.owner = params[:user_id]
 		@pool.save
 
+		# Create an invite to link the user with the pool
+		@pool.invites.create(user_id: params[:user_id], accepted: true)
+
+		# Find all of that user's pools
+		@pools = User.find(params[:user_id]).pools
+
 		resp = {
 			status: 200,
-			pool: @pool
+			message: "Created #{@pool.name}",
+			data: {
+				pools: @pools,
+				number_of_pools: @pools.length
+			}
 		}
 		resp.to_json
 	end
