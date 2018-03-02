@@ -59,20 +59,47 @@ class PoolController < ApplicationController
 		@user = User.find_by(name: params[:username])
 		@invite = @pool.invites.create(user_id: @user.id, accepted: true)
 
+		@pool_members = @pool.users
+		@pool_bids = @pool.bids
+		@teams = Team.all
+
 		resp = {
 			status: 200,
 			message: "Invited #{@user.name} to #{@pool.name} ",
 			data: {
 				pool: @pool,
-				user: @user,
-				invite: @invite
+				users: @pool_members,
+				bids: @pool_bids,
+				teams: @teams	
 			}
 		}
 		resp.to_json
 	end
 
 	post '/bid' do
-		
+		# Get the pool doing the auction
+		@pool = Pool.find(params[:pool_id])
+		# Find the user_id of the winning bidder
+		@user = User.find_by(name: params[:username])
+		# Create the bid
+		@pool.bids.create(user_id: @user.id, team_id: params[:team_id], bid_amount: params[:amount])
+
+		@pool_members = @pool.users
+		@pool_bids = @pool.bids
+		@teams = Team.all
+
+		resp = {
+			status: 200,
+			message: "Submitted #{@user.name}'s bid",
+			data: {
+				pool: @pool,
+				users: @pool_members,
+				bids: @pool_bids,
+				teams: @teams	
+			}
+		}
+		resp.to_json
+
 	end
 
 	get '/bids' do
