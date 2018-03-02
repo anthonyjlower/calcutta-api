@@ -13,30 +13,84 @@ class UserController < ApplicationController
 		resp.to_json
 	end
 
+	get '/test' do
+
+		@user = User.find(1)
+		@pools = @user.pools
+		poolArr = []
+
+		@pools.each { |pool|
+			bids = pool.bids.where(user_id: 1)
+			sum_of_bids = 0
+			bids.each{ |bid| sum_of_bids += bid.bid_amount}
+
+			pool = {
+				name: pool.name,
+				id: pool.id,
+				number_of_bids: bids.length,
+				sum_of_bids: sum_of_bids,
+				bids: bids
+			}
+			poolArr.push(pool)
+		}
+
+		resp = {
+			user: @user,
+			pools: poolArr
+		}
+		resp.to_json
+
+	end
+
+
 	# Get invite and pool information for the logged in user
 	get '/' do
+		# Find the user
 		@user = User.find(1)
-		@bids = @user.bids
-		sum_of_bids = 0
-		@bids.each{ |bid| sum_of_bids += bid.bid_amount}
+		# Find all of the user's bids
+		@user_bids = @user.bids
 
+		# Find the sum of all of the user's bids
+		sum_of_user_bids = 0
+		@user_bids.each{ |bid| sum_of_user_bids += bid.bid_amount}
 
+		# Find all of the user's pools
+		@pools = @user.pools
+		# Create empty array to hold all of the pools
+		poolArr = []
+
+		# Loop through all of the pools
+		@pools.each { |pool|
+			# Find all of the bids in a pool that belong to the user
+			bids = pool.bids.where(user_id: 1)
+
+			# Find the sum of the pool specific bids
+			sum_of_bids = 0
+			bids.each{ |bid| sum_of_bids += bid.bid_amount}
+
+			# Create the new pool hash
+			pool = {
+				name: pool.name,
+				id: pool.id,
+				number_of_bids: bids.length,
+				sum_of_bids: sum_of_bids,
+				bids: bids
+			}
+			# Push the pool hash into the array
+			poolArr.push(pool)
+		}
+
+		# build response
 		resp = {
 			status: 200,
 			message: "Here is the info for user #{@user.name}",
 			data: {
 				user: @user,
-				pools: {
-					number_of_pools: @user.pools.length,
-					pools: @user.pools
-				},
-				bids: {
-					number_of_bids: @user.bids.length,
-					bids: @bids,
-					sum_of_bids: sum_of_bids
+				number_of_pools: @pools.length,
+				total_bet: sum_of_user_bids,
+				pools: poolArr
 				}
 			}
-		}
 		resp.to_json
 	end
 
