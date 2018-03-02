@@ -10,20 +10,89 @@ class PoolController < ApplicationController
 		resp.to_json
 	end
 
+
+	get '/test/:id' do
+		# Get the pool info
+		pool = Pool.find(params[:id])
+		# Get all of the users in the pool
+		pool_members = pool.users
+		teamArr = []
+		
+		# Get all of the Teams in the pool
+		teams = Team.all
+		# Loop through each team in the array
+		teams.each{ |team| 
+			# Find that teams bid in this pool
+			bid = team.bids.find_by(pool_id: params[:id])
+			# Get the user that placed the bid
+			user = User.find(bid.user_id)
+
+			# create new team hash
+			team = {
+				name: team.name,
+				seed: team.seed,
+				season_wins: team.season_wins,
+				season_losses: team.season_losses,
+				tourney_wins: team.tourney_wins,
+				still_alive: team.still_alive,
+				bid: {
+					amount: bid.bid_amount,
+					username: user.name
+				}
+			}
+			# Push hash into the array
+			teamArr.push(team)
+		}
+
+		resp = {
+			pool: pool,
+			pool_members: pool_members,
+			teams: teamArr
+		}
+		resp.to_json
+
+	end
+
 	get '/:id' do
-		@pool = Pool.find(params[:id])
-		@pool_members = @pool.users
-		@pool_bids = @pool.bids
-		@teams = Team.all
+		# Get the pool info
+		pool = Pool.find(params[:id])
+		# Get all of the users in the pool
+		pool_members = pool.users
+		teamArr = []
+		
+		# Get all of the Teams in the pool
+		teams = Team.all
+		# Loop through each team in the array
+		teams.each{ |team| 
+			# Find that teams bid in this pool
+			bid = team.bids.find_by(pool_id: params[:id])
+			# Get the user that placed the bid
+			user = User.find(bid.user_id)
+
+			# create new team hash
+			team = {
+				name: team.name,
+				seed: team.seed,
+				season_wins: team.season_wins,
+				season_losses: team.season_losses,
+				tourney_wins: team.tourney_wins,
+				still_alive: team.still_alive,
+				bid: {
+					amount: bid.bid_amount,
+					username: user.name
+				}
+			}
+			# Push hash into the array
+			teamArr.push(team)
+		}
 
 		resp = {
 			status: 200,
-			message: "Pool #{@pool.id} info, pool's user info, pool's bid info, team info",
+			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
-				pool: @pool,
-				users: @pool_members,
-				bids: @pool_bids,
-				teams: @teams	
+				pool: pool,
+				pool_members: pool_members,
+				teams: teamArr
 			}
 		}
 		resp.to_json
