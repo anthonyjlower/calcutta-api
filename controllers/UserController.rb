@@ -13,35 +13,6 @@ class UserController < ApplicationController
 		resp.to_json
 	end
 
-	get '/test' do
-
-		@user = User.find(1)
-		@pools = @user.pools
-		poolArr = []
-
-		@pools.each { |pool|
-			bids = pool.bids.where(user_id: 1)
-			sum_of_bids = 0
-			bids.each{ |bid| sum_of_bids += bid.bid_amount}
-
-			pool = {
-				name: pool.name,
-				id: pool.id,
-				number_of_bids: bids.length,
-				sum_of_bids: sum_of_bids,
-				bids: bids
-			}
-			poolArr.push(pool)
-		}
-
-		resp = {
-			user: @user,
-			pools: poolArr
-		}
-		resp.to_json
-
-	end
-
 
 	# Get invite and pool information for the logged in user
 	get '/' do
