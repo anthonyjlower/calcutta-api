@@ -12,45 +12,7 @@ class PoolController < ApplicationController
 
 
 	get '/test/:id' do
-		# Get the pool info
-		pool = Pool.find(params[:id])
-		# Get all of the users in the pool
-		pool_members = pool.users
-		teamArr = []
 		
-		# Get all of the Teams in the pool
-		teams = Team.all
-		# Loop through each team in the array
-		teams.each{ |team| 
-			# Find that teams bid in this pool
-			bid = team.bids.find_by(pool_id: params[:id])
-			# Get the user that placed the bid
-			user = User.find(bid.user_id)
-
-			# create new team hash
-			team = {
-				name: team.name,
-				seed: team.seed,
-				season_wins: team.season_wins,
-				season_losses: team.season_losses,
-				tourney_wins: team.tourney_wins,
-				still_alive: team.still_alive,
-				bid: {
-					amount: bid.bid_amount,
-					username: user.name
-				}
-			}
-			# Push hash into the array
-			teamArr.push(team)
-		}
-
-		resp = {
-			pool: pool,
-			pool_members: pool_members,
-			teams: teamArr
-		}
-		resp.to_json
-
 	end
 
 	get '/:id' do
@@ -58,7 +20,9 @@ class PoolController < ApplicationController
 		pool = Pool.find(params[:id])
 		# Get all of the users in the pool
 		pool_members = pool.users
+		
 		teamArr = []
+		pot_size = 0
 		
 		# Get all of the Teams in the pool
 		teams = Team.all
@@ -66,6 +30,9 @@ class PoolController < ApplicationController
 		teams.each{ |team| 
 			# Find that teams bid in this pool
 			bid = team.bids.find_by(pool_id: params[:id])
+			# Sum the bid values
+			pot_size += bid.bid_amount
+
 			# Get the user that placed the bid
 			user = User.find(bid.user_id)
 
@@ -91,6 +58,7 @@ class PoolController < ApplicationController
 			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
 				pool: pool,
+				pot_size: pot_size,
 				pool_members: pool_members,
 				teams: teamArr
 			}

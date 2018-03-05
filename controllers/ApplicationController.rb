@@ -25,6 +25,10 @@ class ApplicationController < Sinatra::Base
 		"Sinatra server is running"
 	end
 
+	get '/test' do
+		binding.pry
+	end
+
 
 
 	options "*" do
