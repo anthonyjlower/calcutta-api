@@ -10,11 +10,6 @@ class PoolController < ApplicationController
 		resp.to_json
 	end
 
-
-	get '/test/:id' do
-		
-	end
-
 	get '/:id' do
 		# Get the pool info
 		pool = Pool.find(params[:id])
@@ -30,14 +25,10 @@ class PoolController < ApplicationController
 		teams.each{ |team| 
 			# Find that teams bid in this pool
 			bid = team.bids.find_by(pool_id: params[:id])
-			# Sum the bid values
-			pot_size += bid.bid_amount
 
-			# Get the user that placed the bid
-			user = User.find(bid.user_id)
-
-			# create new team hash
-			team = {
+			# If bid value is nil
+			if bid == nil
+				team = {
 				name: team.name,
 				seed: team.seed,
 				season_wins: team.season_wins,
@@ -45,14 +36,38 @@ class PoolController < ApplicationController
 				tourney_wins: team.tourney_wins,
 				still_alive: team.still_alive,
 				bid: {
-					amount: bid.bid_amount,
-					username: user.name
+					amount: 0,
+					username: ""
 				}
 			}
 			# Push hash into the array
 			teamArr.push(team)
-		}
 
+			else
+				# Sum the bid values
+				pot_size += bid.bid_amount
+
+				# Get the user that placed the bid
+				user = User.find(bid.user_id)
+
+				# create new team hash
+				team = {
+					name: team.name,
+					seed: team.seed,
+					season_wins: team.season_wins,
+					season_losses: team.season_losses,
+					tourney_wins: team.tourney_wins,
+					still_alive: team.still_alive,
+					bid: {
+						amount: bid.bid_amount,
+						username: user.name
+					}
+				}
+				# Push hash into the array
+				teamArr.push(team)
+			end
+		}
+			
 		resp = {
 			status: 200,
 			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
@@ -74,20 +89,55 @@ class PoolController < ApplicationController
 		@pool.owner = params[:user_id]
 		@pool.save
 
-		# Create an invite to link the user with the pool
-		@pool.invites.create(user_id: params[:user_id], accepted: true)
+		# Create invite to link the pool with the creating user
+		@pool.invites.create({user_id: params[:user_id], accepted: true})
 
-		# Find all of that user's pools
-		@pools = User.find(params[:user_id]).pools
+		# Find the user
+		@user = User.find(params[:user_id])
+		# Find all of the user's bids
+		@user_bids = @user.bids
 
+		# Find the sum of all of the user's bids
+		sum_of_user_bids = 0
+		@user_bids.each{ |bid| sum_of_user_bids += bid.bid_amount}
+
+		# Find all of the user's pools
+		@pools = @user.pools
+		# Create empty array to hold all of the pools
+		poolArr = []
+
+		# Loop through all of the pools
+		@pools.each { |pool|
+			# Find all of the bids in a pool that belong to the user
+			bids = pool.bids.where(user_id: 1)
+
+			# Find the sum of the pool specific bids
+			sum_of_bids = 0
+			bids.each{ |bid| sum_of_bids += bid.bid_amount}
+
+			# Create the new pool hash
+			pool = {
+				name: pool.name,
+				id: pool.id,
+				number_of_bids: bids.length,
+				sum_of_bids: sum_of_bids,
+				bids: bids
+			}
+			# Push the pool hash into the array
+			poolArr.push(pool)
+		}
+
+		# build response
 		resp = {
 			status: 200,
-			message: "Created #{@pool.name}",
+			message: "Here is the info for user #{@user.name}",
 			data: {
-				pools: @pools,
-				number_of_pools: @pools.length
+				user: @user,
+				number_of_pools: @pools.length,
+				total_bet: sum_of_user_bids,
+				pools: poolArr
+				}
 			}
-		}
 		resp.to_json
 	end
 
@@ -138,18 +188,5 @@ class PoolController < ApplicationController
 		resp.to_json
 
 	end
-
-	get '/bids' do
-		@bids = Pool.find(1).bids
-
-		resp = {
-			status: 200,
-			number_of_bids: @bids.length,
-			bids: @bids
-		}
-		resp.to_json
-	end
-
-
 
 end
