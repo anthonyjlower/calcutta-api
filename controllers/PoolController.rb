@@ -141,26 +141,84 @@ class PoolController < ApplicationController
 		resp.to_json
 	end
 
+
+	# Invite user to a pool
 	post '/invite' do
-		@pool = Pool.find(params[:pool_id])
-		@user = User.find_by(name: params[:username])
-		@invite = @pool.invites.create(user_id: @user.id, accepted: true)
+		# Find the pool the invite will belong to you
+		pool = Pool.find(params[:pool_id])
+		# Find the user being invited by name
+		invitedUser = User.find_by(name: params[:username])
+		# Create the invite
+		@invite = pool.invites.create(user_id: invitedUser.id, accepted: true)
 
-		@pool_members = @pool.users
-		@pool_bids = @pool.bids
-		@teams = Team.all
+		
+		# Get all of the users in the pool
+		pool_members = pool.users
+		
+		teamArr = []
+		pot_size = 0
+		
+		# Get all of the Teams in the pool
+		teams = Team.all
+		# Loop through each team in the array
+		teams.each{ |team| 
+			# Find that teams bid in this pool
+			bid = team.bids.find_by(pool_id: params[:id])
 
+			# If bid value is nil
+			if bid == nil
+				team = {
+				name: team.name,
+				seed: team.seed,
+				season_wins: team.season_wins,
+				season_losses: team.season_losses,
+				tourney_wins: team.tourney_wins,
+				still_alive: team.still_alive,
+				bid: {
+					amount: 0,
+					username: ""
+				}
+			}
+			# Push hash into the array
+			teamArr.push(team)
+
+			else
+				# Sum the bid values
+				pot_size += bid.bid_amount
+
+				# Get the user that placed the bid
+				user = User.find(bid.user_id)
+
+				# create new team hash
+				team = {
+					name: team.name,
+					seed: team.seed,
+					season_wins: team.season_wins,
+					season_losses: team.season_losses,
+					tourney_wins: team.tourney_wins,
+					still_alive: team.still_alive,
+					bid: {
+						amount: bid.bid_amount,
+						username: user.name
+					}
+				}
+				# Push hash into the array
+				teamArr.push(team)
+			end
+		}
+			
 		resp = {
 			status: 200,
-			message: "Invited #{@user.name} to #{@pool.name} ",
+			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
-				pool: @pool,
-				users: @pool_members,
-				bids: @pool_bids,
-				teams: @teams	
+				pool: pool,
+				pot_size: pot_size,
+				pool_members: pool_members,
+				teams: teamArr
 			}
 		}
 		resp.to_json
+
 	end
 
 	post '/bid' do
