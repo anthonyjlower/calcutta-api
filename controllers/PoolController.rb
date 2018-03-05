@@ -1,5 +1,10 @@
 class PoolController < ApplicationController
 
+	get '/test' do
+		binding.pry
+	end
+
+
 	get "/all" do
 		@pools = Pool.all
 
@@ -37,7 +42,7 @@ class PoolController < ApplicationController
 				still_alive: team.still_alive,
 				bid: {
 					amount: 0,
-					username: ""
+					username: "Not Owned"
 				}
 			}
 			# Push hash into the array
@@ -176,7 +181,7 @@ class PoolController < ApplicationController
 				still_alive: team.still_alive,
 				bid: {
 					amount: 0,
-					username: ""
+					username: "Not Owned"
 				}
 			}
 			# Push hash into the array
@@ -223,28 +228,78 @@ class PoolController < ApplicationController
 
 	post '/bid' do
 		# Get the pool doing the auction
-		@pool = Pool.find(params[:pool_id])
+		pool = Pool.find(params[:pool_id])
 		# Find the user_id of the winning bidder
-		@user = User.find_by(name: params[:username])
+		bidding_user = User.find_by(name: params[:username])
 		# Create the bid
-		@pool.bids.create(user_id: @user.id, team_id: params[:team_id], bid_amount: params[:amount])
+		new_bid = pool.bids.create(user_id: bidding_user.id, team_id: params[:team_id], bid_amount: params[:amount])
+		
+		# Get all of the users in the pool
+		pool_members = pool.users
+		
+		teamArr = []
+		pot_size = 0
+		
+		# Get all of the Teams in the pool
+		teams = Team.all
+		# Loop through each team in the array
+		teams.each{ |team| 
+			# Find that teams bid in this pool
+			bid = team.bids.find_by(pool_id: pool.id)
 
-		@pool_members = @pool.users
-		@pool_bids = @pool.bids
-		@teams = Team.all
+			# If bid value is nil
+			if bid == nil
+				team = {
+					name: team.name,
+					seed: team.seed,
+					season_wins: team.season_wins,
+					season_losses: team.season_losses,
+					tourney_wins: team.tourney_wins,
+					still_alive: team.still_alive,
+					bid: {
+						amount: 0,
+						username: "Not Owned"
+					}
+				}
+				# Push hash into the array
+				teamArr.push(team)
+			else
+				# Sum the bid values
+				pot_size += bid.bid_amount
 
+				# Get the user that placed the bid
+				user = User.find(bid.user_id)
+
+				# create new team hash
+				team = {
+					name: team.name,
+					seed: team.seed,
+					season_wins: team.season_wins,
+					season_losses: team.season_losses,
+					tourney_wins: team.tourney_wins,
+					still_alive: team.still_alive,
+					bid: {
+						amount: bid.bid_amount,
+						username: user.name
+					}
+				}
+				# Push hash into the array
+				teamArr.push(team)
+			end
+		}
+			
 		resp = {
 			status: 200,
-			message: "Submitted #{@user.name}'s bid",
+			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
-				pool: @pool,
-				users: @pool_members,
-				bids: @pool_bids,
-				teams: @teams	
+				pool: pool,
+				pot_size: pot_size,
+				pool_members: pool_members,
+				teams: teamArr
 			}
 		}
 		resp.to_json
-
+		
 	end
 
 end

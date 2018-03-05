@@ -79,44 +79,4 @@ class UserController < ApplicationController
 		resp.to_json
 	end
 
-	# Look at a users invites
-	get	'/invites' do
-		@invites = User.find(1).invites
-
-		resp = {
-			status: 200,
-			invites: @invites
-		}
-		resp.to_json
-	end
-
-	# Look at a users bids
-	get	'/bids' do
-		@bids = User.find(1).bids
-
-		resp ={
-			status: 200,
-			number_of_bids: @bids.length,
-			bids: @bids
-		}
-		resp.to_json
-	end
-
-
-	# Look at a users pools
-	get	'/pools' do
-		@pools = User.find(1).pools
-
-		resp ={
-			status: 200,
-			number_of_pools: @pools.length,
-			pools: @pools
-		}
-		resp.to_json
-	end
-
-
-
-
-
 end
