@@ -20,6 +20,8 @@ class PoolController < ApplicationController
 		pool = Pool.find(params[:id])
 		# Get all of the users in the pool
 		pool_members = pool.users
+
+		number_of_bids = pool.bids.length
 		
 		teamArr = []
 		pot_size = 0
@@ -78,6 +80,7 @@ class PoolController < ApplicationController
 			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
 				pool: pool,
+				number_of_bids: number_of_bids,
 				pot_size: pot_size,
 				pool_members: pool_members,
 				teams: teamArr
