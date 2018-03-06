@@ -3,6 +3,8 @@ class ApplicationController < Sinatra::Base
 	require "bundler"
 	Bundler.require();
 
+	enable :sessions
+
 	register Sinatra::CrossOrigin
 
 	ActiveRecord::Base.establish_connection(

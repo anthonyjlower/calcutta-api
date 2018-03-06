@@ -15,9 +15,10 @@ class UserController < ApplicationController
 
 
 	# Get invite and pool information for the logged in user
-	get '/' do
+	get '/:id' do
+
 		# Find the user
-		@user = User.find(1)
+		@user = User.find(params[:id])
 		# Find all of the user's bids
 		@user_bids = @user.bids
 
@@ -33,7 +34,7 @@ class UserController < ApplicationController
 		# Loop through all of the pools
 		@pools.each { |pool|
 			# Find all of the bids in a pool that belong to the user
-			bids = pool.bids.where(user_id: 1)
+			bids = pool.bids.where(user_id: @user.id)
 
 			# Find the sum of the pool specific bids
 			sum_of_bids = 0
@@ -75,6 +76,21 @@ class UserController < ApplicationController
 			status: 200,
 			message: "Created user #{@user.name}",
 			user: @user
+		}
+		resp.to_json
+	end
+
+	post '/login' do
+		user = User.find_by(name: params[:username])
+
+		session[:user_id] = user.id
+
+		resp = {
+			status: 200,
+			message: "#{user.name} is logged in",
+			data: {
+				user: user
+			}
 		}
 		resp.to_json
 	end
