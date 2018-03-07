@@ -45,7 +45,7 @@ class PoolController < ApplicationController
 				seed: team.seed,
 				season_wins: team.season_wins,
 				season_losses: team.season_losses,
-				tourney_wins: team.tourney_wins,
+				winnings: team.current_winnings,
 				still_alive: team.still_alive,
 				bid: {
 					amount: 0,
