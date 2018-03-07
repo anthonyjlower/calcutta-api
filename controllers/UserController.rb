@@ -14,56 +14,72 @@ class UserController < ApplicationController
 	end
 
 
-	# Get invite and pool information for the logged in user
+	get '/test' do
+		
+	end
+
+
+	# Get summary and pool information for the logged in user
 	get '/:id' do
 
-		# Find the user
-		@user = User.find(params[:id])
-		# Find all of the user's bids
-		@user_bids = @user.bids
+		user = User.find(1)
+		pools = user.pools
 
-		# Find the sum of all of the user's bids
-		sum_of_user_bids = 0
-		@user_bids.each{ |bid| sum_of_user_bids += bid.bid_amount}
-
-		# Find all of the user's pools
-		@pools = @user.pools
-		# Create empty array to hold all of the pools
+		user_bets = 0
+		user_winnings = 0
 		poolArr = []
 
-		# Loop through all of the pools
-		@pools.each { |pool|
-			# Find all of the bids in a pool that belong to the user
-			bids = pool.bids.where(user_id: @user.id)
+		# For each pool find; how much the user has bet, How much the user has won
+		pools.each{ |pool|
+			pool_pot = 0
+			user_pool_bets = 0
+			user_pool_winnings = 0
 
-			# Find the sum of the pool specific bids
-			sum_of_bids = 0
-			bids.each{ |bid| sum_of_bids += bid.bid_amount}
+			# Calc the size of this pools total pot
+			pool.bids.each{ |bid| pool_pot += bid.bid_amount}
 
-			# Create the new pool hash
+			# Go through each team's bid in the pot		
+			Team.all.each{ |team| 
+				
+				
+				bid = team.bids.where(pool_id: pool.id)
+		
+				# If the team is owned by the user
+				if bid.length != 0 && bid[0].user_id === user.id
+				
+					# Add their bid amount to the totals
+					user_pool_bets += bid[0].bid_amount
+					user_bets += bid[0].bid_amount
+
+					# Calc their winnings and add it to the totals
+					teamWinnings = pool_pot * team.current_winnings
+					user_pool_winnings += teamWinnings
+					user_winnings += teamWinnings
+				end
+			}
+
 			pool = {
 				name: pool.name,
 				id: pool.id,
-				number_of_bids: bids.length,
-				sum_of_bids: sum_of_bids,
-				bids: bids
+				user_bets: user_pool_bets,
+				user_winnings: user_pool_winnings
 			}
-			# Push the pool hash into the array
 			poolArr.push(pool)
 		}
 
-		# build response
 		resp = {
 			status: 200,
-			message: "Here is the info for user #{@user.name}",
+			message: "Here is the info for user #{user.name}",
 			data: {
-				user: @user,
-				number_of_pools: @pools.length,
-				total_bet: sum_of_user_bids,
+				user: user,
+				number_of_pools: pools.length,
+				total_bet: user_bets,
+				total_won: user_winnings,
 				pools: poolArr
 				}
 			}
 		resp.to_json
+
 	end
 
 	# Create a new user

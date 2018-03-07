@@ -25,6 +25,11 @@ class PoolController < ApplicationController
 		
 		teamArr = []
 		pot_size = 0
+
+		# Sum the bid values
+		pool.bids.each{ |bid|
+			pot_size += bid.bid_amount
+		}
 		
 		# Get all of the Teams in the pool
 		teams = Team.all
@@ -51,8 +56,8 @@ class PoolController < ApplicationController
 			teamArr.push(team)
 
 			else
-				# Sum the bid values
-				pot_size += bid.bid_amount
+				# Calculate the team's winnings
+				winnings = team.current_winnings * pot_size
 
 				# Get the user that placed the bid
 				user = User.find(bid.user_id)
@@ -63,7 +68,7 @@ class PoolController < ApplicationController
 					seed: team.seed,
 					season_wins: team.season_wins,
 					season_losses: team.season_losses,
-					tourney_wins: team.tourney_wins,
+					winnings: winnings,
 					still_alive: team.still_alive,
 					bid: {
 						amount: bid.bid_amount,
