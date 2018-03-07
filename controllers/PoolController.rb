@@ -234,6 +234,7 @@ class PoolController < ApplicationController
 
 	end
 
+
 	post '/bid' do
 		# Get the pool doing the auction
 		pool = Pool.find(params[:pool_id])
@@ -241,39 +242,53 @@ class PoolController < ApplicationController
 		bidding_user = User.find_by(name: params[:username])
 		# Create the bid
 		new_bid = pool.bids.create(user_id: bidding_user.id, team_id: params[:team_id], bid_amount: params[:amount])
-		
+		'-------New Bid------------'
+		p new_bid
+
 		# Get all of the users in the pool
 		pool_members = pool.users
+
+		number_of_bids = pool.bids.length
 		
 		teamArr = []
 		pot_size = 0
+
+		# Sum the bid values
+		pool.bids.each{ |bid|
+			pot_size += bid.bid_amount
+		}
 		
 		# Get all of the Teams in the pool
 		teams = Team.all
 		# Loop through each team in the array
 		teams.each{ |team| 
+			p '------------Team Array-----------'
+			p teamArr
+
+
 			# Find that teams bid in this pool
 			bid = team.bids.find_by(pool_id: pool.id)
 
 			# If bid value is nil
 			if bid == nil
 				team = {
-					name: team.name,
-					seed: team.seed,
-					season_wins: team.season_wins,
-					season_losses: team.season_losses,
-					tourney_wins: team.tourney_wins,
-					still_alive: team.still_alive,
-					bid: {
-						amount: 0,
-						username: "Not Owned"
-					}
+				name: team.name,
+				seed: team.seed,
+				season_wins: team.season_wins,
+				season_losses: team.season_losses,
+				winnings: team.current_winnings,
+				still_alive: team.still_alive,
+				bid: {
+					amount: 0,
+					username: "Not Owned"
 				}
-				# Push hash into the array
-				teamArr.push(team)
+			}
+			# Push hash into the array
+			teamArr.push(team)
+
 			else
-				# Sum the bid values
-				pot_size += bid.bid_amount
+				# Calculate the team's winnings
+				winnings = team.current_winnings * pot_size
 
 				# Get the user that placed the bid
 				user = User.find(bid.user_id)
@@ -284,7 +299,7 @@ class PoolController < ApplicationController
 					seed: team.seed,
 					season_wins: team.season_wins,
 					season_losses: team.season_losses,
-					tourney_wins: team.tourney_wins,
+					winnings: winnings,
 					still_alive: team.still_alive,
 					bid: {
 						amount: bid.bid_amount,
@@ -301,6 +316,7 @@ class PoolController < ApplicationController
 			message: "Pool #{pool.id} info, pool's user info, pool's bid info, team info",
 			data: {
 				pool: pool,
+				number_of_bids: number_of_bids,
 				pot_size: pot_size,
 				pool_members: pool_members,
 				teams: teamArr
