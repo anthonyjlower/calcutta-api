@@ -28,7 +28,7 @@ CREATE TABLE teams(
 	seed INT,
 	season_wins INT,
 	season_losses INT,
-	tourney_wins INT,
+	current_winnings DECIMAL,
 	still_alive BOOLEAN
 );
 
@@ -37,5 +37,5 @@ CREATE TABLE bids(
 	pool_id INT references pools(id),
 	user_id INT references users(id),
 	team_id INT references teams(id), 
-	bid_amount INT
+	bid_amount DECIMAL
 );
