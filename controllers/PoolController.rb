@@ -1,10 +1,5 @@
 class PoolController < ApplicationController
 
-	get '/test' do
-		binding.pry
-	end
-
-
 	get "/all" do
 		@pools = Pool.all
 
@@ -92,7 +87,6 @@ class PoolController < ApplicationController
 			}
 		}
 		resp.to_json
-
 	end
 
 	post '/' do
@@ -240,7 +234,6 @@ class PoolController < ApplicationController
 			}
 		}
 		resp.to_json
-
 	end
 
 
@@ -327,7 +320,6 @@ class PoolController < ApplicationController
 			}
 		}
 		resp.to_json
-		
 	end
 
 end

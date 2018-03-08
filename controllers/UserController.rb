@@ -14,8 +14,48 @@ class UserController < ApplicationController
 	end
 
 
-	get '/test' do
-		
+	get '/:user_id/pool/:pool_id' do
+		user = User.find(params[:user_id])
+		pool = Pool.find(params[:pool_id])
+
+		pot_size = 0
+		total_bet = 0
+		total_won = 0
+		teamArr = []
+
+		# Calculate pot total to do winnings calc
+	 	pool.bids.each{ |bid| 
+	 		pot_size += bid.bid_amount
+	 	}
+
+	 	Team.all.each{ |team |
+	 		bid = team.bids.find_by(pool_id: pool.id)
+
+	 		if bid.user_id === user.id
+	 			winnings = team.current_winnings * pot_size
+	 			total_bet += bid.bid_amount
+	 			total_won += winnings
+
+	 			team = {
+	 				name: team.name,
+	 				bidAmount: bid.bid_amount,
+	 				winnings: winnings
+	 			}
+	 			teamArr.push(team)	
+	 		end
+	 	}
+
+		resp = {
+			status: 200,
+			message: "Info for #{user.name} in #{pool.name}",
+			data: {
+				user: user,
+				total_bet: total_bet,
+				total_won: total_won,
+				teams: teamArr
+			}
+		}
+		resp.to_json
 	end
 
 
