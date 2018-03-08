@@ -22,7 +22,7 @@ class UserController < ApplicationController
 	# Get summary and pool information for the logged in user
 	get '/:id' do
 
-		user = User.find(1)
+		user = User.find(params[:id])
 		pools = user.pools
 
 		user_bets = 0
