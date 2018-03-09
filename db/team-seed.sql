@@ -1,3 +1,5 @@
+-- 2017 NCAA Men's Basketball Tournament
+
 INSERT INTO teams(name, seed, season_wins, season_losses, current_winnings, still_alive) VALUES ('Villanova', 1, 22, 3, .01, TRUE);
 INSERT INTO teams(name, seed, season_wins, season_losses, current_winnings, still_alive) VALUES ('Gonzaga', 1, 29, 12, .12, TRUE);
 INSERT INTO teams(name, seed, season_wins, season_losses, current_winnings, still_alive) VALUES ('Kansas', 1, 16, 14, .05, TRUE);
