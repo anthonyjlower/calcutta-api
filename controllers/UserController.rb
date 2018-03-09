@@ -31,18 +31,20 @@ class UserController < ApplicationController
 	 	Team.all.each{ |team |
 	 		bid = team.bids.find_by(pool_id: pool.id)
 
-	 		if bid.user_id === user.id
-	 			winnings = team.current_winnings * pot_size
-	 			total_bet += bid.bid_amount
-	 			total_won += winnings
+	 		if bid != nil
+		 		if bid.user_id === user.id
+		 			winnings = team.current_winnings * pot_size
+		 			total_bet += bid.bid_amount
+		 			total_won += winnings
 
-	 			team = {
-	 				name: team.name,
-	 				bidAmount: bid.bid_amount,
-	 				winnings: winnings
-	 			}
-	 			teamArr.push(team)	
-	 		end
+		 			team = {
+		 				name: team.name,
+		 				bidAmount: bid.bid_amount,
+		 				winnings: winnings
+		 			}
+		 			teamArr.push(team)	
+		 		end
+		 	end
 	 	}
 
 		resp = {
@@ -124,31 +126,66 @@ class UserController < ApplicationController
 
 	# Create a new user
 	post '/' do
-		@user = User.new
-		@user.name = params[:name]
-		@user.save
-
-		resp = {
-			status: 200,
-			message: "Created user #{@user.name}",
-			user: @user
-		}
-		resp.to_json
+		user = User.find_by(name: params[:username])
+		if user
+			message = 'That username is taken, please pick another'	
+			resp = {
+				status: 200,
+				message: 'Cannot make that user',
+				data: {
+					userId: "",
+					username: '',
+					loggedIn: false,
+					message: message
+				}
+			}
+			resp.to_json
+		else
+			newUser = User.new
+			newUser.name = params[:username]
+			newUser.password = params[:password]
+			newUser.save
+			resp = {
+				status: 200,
+				message: '#{newUser.name} has been created',
+				data: {
+					userId: newUser.id,
+					username: newUser.name,
+					loggedIn: true,
+					message: ""
+					}
+				}
+				resp.to_json
+		end
 	end
 
 	post '/login' do
+		pw = params[:password]
 		user = User.find_by(name: params[:username])
 
-		session[:user_id] = user.id
-
-		resp = {
-			status: 200,
-			message: "#{user.name} is logged in",
-			data: {
-				user: user
+		if user && user.authenticate(pw)
+			resp = {
+				status: 200,
+				message: "#{user.name} is logged in",
+				data: {
+					userId: user.id,
+					loggedIn: true,
+					message: ""
+				}
 			}
-		}
-		resp.to_json
-	end
+			resp.to_json
+		else
+			resp = {
+				status: 200,
+				message: 'Login failed',
+				data: {
+					userId: '',
+					loggedIn: false,
+					message: "Either the username or password was incorrect. Please try again."
+				}
+			}
+			resp.to_json
+		end
 
+	end
 end

@@ -6,7 +6,8 @@ CREATE DATABASE calcutta;
 
 CREATE TABLE users(
 	id SERIAL PRIMARY KEY,
-	name VARCHAR(255)
+	name VARCHAR(255),
+	password_digest VARCHAR(60)
 );
 
 CREATE TABLE pools(
