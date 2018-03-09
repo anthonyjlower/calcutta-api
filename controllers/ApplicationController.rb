@@ -2,18 +2,13 @@ class ApplicationController < Sinatra::Base
 
 	require "bundler"
 	Bundler.require();
+	require './config/environments'
 
 	enable :sessions
-
-	register Sinatra::CrossOrigin
-
-	ActiveRecord::Base.establish_connection(
- 		:adapter => 'postgresql', 
- 		:database => 'calcutta'
-	)
-
 	set :views, File.expand_path("../../views", __FILE__)
 	set :public_dir, File.expand_path("../../public", __FILE__)
+
+	register Sinatra::CrossOrigin
 
 
 	configure do
