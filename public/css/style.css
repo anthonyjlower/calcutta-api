@@ -1,0 +1,95 @@
+body{
+	font-family: 'Arimo', sans-serif;
+	width: 100vw;
+	margin: 0;
+	background-color: rgb(168, 218, 220);
+}
+#what-is-it{
+	width: 95vw;
+	margin: 0 auto;
+	margin-top: 2vh;
+	padding-bottom: 5vh;
+	background-color: rgb(29, 53, 87);
+	color: rgb(241, 250, 238);
+}
+#what-is-it h1{
+	font-size: 5vw;
+	margin-top: 0;
+	padding-top: 2.5vh;
+	text-transform: uppercase;
+}
+#what-is-it p{
+	width: 90%;
+	font-size: 2vw;
+	margin: 2vh auto;
+	text-align: left;
+}
+#what-is-it ol{
+	padding-top: 2vh;
+	padding-bottom: 2vh;
+	margin-bottom: 5vh;
+	width: 90%;
+	margin: 5vh auto;
+	border: 10px solid rgb(69, 123, 157);
+	background-color: rgb(241, 250, 238);
+	color: rgb(29, 53, 87);
+}
+button{
+	color: rgb(241, 250, 238);
+	background-color: rgb(230, 57, 70);
+	width: 25vw;
+	height: 8vh;
+	margin: 3vh 37.5vw;
+}
+#rules-list{
+	display: none;
+}
+#rules{
+	cursor: pointer;
+}
+#rules:hover{
+	text-decoration: underline;
+}
+
+#what-is-it li {
+	margin-top: 1vh;
+	font-size: 1.5vw;
+	text-transform: capitalize;
+}
+#what-is-it ul {
+	list-style-type: none;
+}
+#how-it-works {
+	width: 95vw;
+	margin: 0 auto;
+	color: rgb(29, 53, 87);
+	background-color: rgb(241, 250, 238);
+	padding-bottom: 2vh;
+}
+#how-it-works h2{
+	font-size: 3vw;
+}
+#how-it-works p{
+	font-size: 2vw;
+}
+#how-it-works ol {
+	padding-top: 2vh;
+	padding-bottom: 2vh;
+	width: 90%;
+	margin: 0 auto;
+}
+#joke{
+	border: 10px solid rgb(69, 123, 157);
+	color: rgb(241, 250, 238);
+	background-color: rgb(29, 53, 87);
+}
+#how-it-works li {
+	margin-top: 1vh;
+	font-size: 1.5vw;
+	text-transform: capitalize;
+}
+#instructions {
+	border: 10px solid rgb(69, 123, 157);
+	color: rgb(241, 250, 238);
+	background-color: rgb(29, 53, 87);
+}
