@@ -21,7 +21,7 @@ body{
 #what-is-it p{
 	width: 90%;
 	font-size: 2vw;
-	margin: 2vh auto;
+	margin: 4vh auto;
 	text-align: left;
 }
 #what-is-it ol{
@@ -35,11 +35,15 @@ body{
 	color: rgb(29, 53, 87);
 }
 button{
-	color: rgb(241, 250, 238);
 	background-color: rgb(230, 57, 70);
 	width: 25vw;
 	height: 8vh;
 	margin: 3vh 37.5vw;
+}
+button a{
+	color: rgb(241, 250, 238);
+	font-size: 2vh;
+	text-decoration: none;
 }
 #rules-list{
 	display: none;
@@ -61,9 +65,9 @@ button{
 }
 #how-it-works {
 	width: 95vw;
-	margin: 0 auto;
-	color: rgb(29, 53, 87);
-	background-color: rgb(241, 250, 238);
+	margin: 10vh auto;
+	background-color: rgb(29, 53, 87);
+	color: rgb(241, 250, 238);
 	padding-bottom: 2vh;
 }
 #how-it-works h2{
@@ -80,8 +84,8 @@ button{
 }
 #joke{
 	border: 10px solid rgb(69, 123, 157);
-	color: rgb(241, 250, 238);
-	background-color: rgb(29, 53, 87);
+	background-color: rgb(241, 250, 238);
+	color: rgb(29, 53, 87);
 }
 #how-it-works li {
 	margin-top: 1vh;
@@ -90,6 +94,6 @@ button{
 }
 #instructions {
 	border: 10px solid rgb(69, 123, 157);
-	color: rgb(241, 250, 238);
-	background-color: rgb(29, 53, 87);
+	background-color: rgb(241, 250, 238);
+	color: rgb(29, 53, 87);
 }
